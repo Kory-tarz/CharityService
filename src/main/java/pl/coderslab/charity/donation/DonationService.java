@@ -10,4 +10,12 @@ public class DonationService {
     public DonationService(DonationRepository donationRepository) {
         this.donationRepository = donationRepository;
     }
+
+    public long getTotalQuantityOfDonations(){
+        return donationRepository.totalQuantityDonated();
+    }
+
+    public long getTotalDonationsCount(){
+        return 1L;
+    }
 }
