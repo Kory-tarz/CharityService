@@ -38,9 +38,10 @@ class HomeControllerTest {
         mockMvc.perform(get("/"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("totalQuantity"))
-                .andExpect(model().attributeExists("totalDonations"))
+                .andExpect(model().attributeExists("donationsCount"))
+                .andExpect(model().attributeExists("institutions"))
                 .andExpect(model().attribute("totalQuantity", QUANTITY_COUNT))
-                .andExpect(model().attribute("totalDonations", 1L))
+                .andExpect(model().attribute("donationsCount", DONATIONS_COUNT))
                 .andExpect(view().name("index"));
     }
 }
