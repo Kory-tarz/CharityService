@@ -2,6 +2,8 @@ package pl.coderslab.charity.donation;
 
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class DonationService {
 
@@ -17,5 +19,13 @@ public class DonationService {
 
     public long getTotalDonationsCount(){
         return donationRepository.count();
+    }
+
+    public Donation save(Donation donation) {
+        return donationRepository.save(donation);
+    }
+
+    public Optional<Donation> findById(long id){
+        return donationRepository.findById(id);
     }
 }
