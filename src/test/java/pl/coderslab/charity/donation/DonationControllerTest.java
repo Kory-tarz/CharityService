@@ -79,7 +79,7 @@ class DonationControllerTest {
         donation.setCity("Miasto");
         donation.setZipCode("01-234");
         donation.setPickUpDate(LocalDate.of(2022, 12, 12));
-        donation.setPickUpTime(LocalTime.of(16, 30));
+        donation.setPickUpTime(LocalTime.of(15, 30));
         donation.setPickUpComment("komentarz");
 
         return donation;
@@ -108,7 +108,6 @@ class DonationControllerTest {
     void processDonationFormSuccessTest() throws Exception {
         Donation donation = getDonation();
         performDonatePost(donation)
-//                .andExpect(model().attributeHasNoErrors("donation"))
                 .andExpect(model().attributeDoesNotExist("donation")) // doesn't exist if no errors occurred
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/confirmation/" + TEST_DONATION_ID));
@@ -135,6 +134,7 @@ class DonationControllerTest {
                 .param("city", donation.getCity())
                 .param("zipCode", donation.getZipCode())
                 .param("pickUpDate", donation.getPickUpDate().toString())
+                .param("pickUpTime", donation.getPickUpTime().toString())
                 .param("category", "1")
                 .param("_categories", "on")
                 .param("institution", "1")

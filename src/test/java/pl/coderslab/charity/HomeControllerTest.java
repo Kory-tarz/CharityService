@@ -9,7 +9,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import pl.coderslab.charity.donation.DonationService;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -29,7 +28,7 @@ class HomeControllerTest {
 
     @BeforeEach
     void setUp(){
-        given(this.donationService.getTotalDonationsCount()).willReturn(DONATIONS_COUNT);
+        given(this.donationService.getDonationsCount()).willReturn(DONATIONS_COUNT);
         given(this.donationService.getTotalQuantityOfDonations()).willReturn(QUANTITY_COUNT);
     }
 

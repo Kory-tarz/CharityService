@@ -1,5 +1,6 @@
 package pl.coderslab.charity.donation;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -12,9 +13,9 @@ import pl.coderslab.charity.model.ResourceNotFoundException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.lang.module.ResolutionException;
 import java.util.Arrays;
 
+@Log4j2
 @Controller
 public class DonationController {
 
@@ -46,13 +47,8 @@ public class DonationController {
 
     @PostMapping("/donate")
     public String processDonateForm(HttpServletRequest request, Model model, @Valid Donation donation, BindingResult bindingResult) {
-//        request.getParameterMap().forEach((key, val)-> System.out.println(key + " : " + Arrays.toString(val)));
-//        System.out.println("-----ERRORS----------");
-//        bindingResult.getAllErrors().forEach(System.out::println);
-//        System.out.println("----------");
-//        System.out.println(donation.toString());
-//        System.out.println(donation.getInstitution().getName());
         if (bindingResult.hasErrors()) {
+            log.warn(bindingResult.getAllErrors());
             model.addAttribute(DONATION, donation);
             setUpDonationFormModelAttributes(model);
             return "donation/form";

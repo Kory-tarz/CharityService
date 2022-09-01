@@ -17,7 +17,7 @@ public class DonationService {
         return donationRepository.totalQuantityDonated();
     }
 
-    public long getTotalDonationsCount(){
+    public long getDonationsCount(){
         return donationRepository.count();
     }
 

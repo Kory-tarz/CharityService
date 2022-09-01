@@ -55,7 +55,7 @@ public class Donation extends BaseEntity {
     private LocalDate pickUpDate;
 
     @Column(name = "pick_up_time")
-    @DateTimeFormat(pattern = "hh:mm")
+    @DateTimeFormat(pattern = "HH:mm")
     private LocalTime pickUpTime;
 
     @Column(name = "pick_up_comment")
