@@ -2,23 +2,20 @@ package pl.coderslab.charity.donation;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.format.support.FormattingConversionService;
-import org.springframework.http.MediaType;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.format.support.DefaultFormattingConversionService;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MockMvcBuilder;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import pl.coderslab.charity.category.Category;
-import pl.coderslab.charity.category.CategoryRepository;
 import pl.coderslab.charity.institution.Institution;
 import pl.coderslab.charity.institution.InstitutionRepository;
+import pl.coderslab.charity.institution.InstitutionService;
 import pl.coderslab.charity.model.ResourceNotFoundException;
 
 import java.time.LocalDate;
@@ -26,11 +23,10 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
-import static org.hamcrest.Matchers.hasProperty;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.AdditionalMatchers.not;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -47,12 +43,6 @@ class DonationControllerTest {
     private DonationService donationService;
 
     private final static long TEST_DONATION_ID = 1L;
-
-//    @MockBean
-//    private InstitutionRepository institutionRepository;
-//
-//    @MockBean
-//    private CategoryRepository categoryRepository;
 
     private Category getCategory() {
         Category category = new Category();
@@ -87,8 +77,10 @@ class DonationControllerTest {
 
     @BeforeEach
     void setUp() {
+
         Donation donationWithId = getDonation();
         donationWithId.setId(TEST_DONATION_ID);
+
         given(donationService.save(any())).willReturn(donationWithId);
         given(donationService.findById(eq(TEST_DONATION_ID))).willReturn(Optional.of(donationWithId));
         given(donationService.findById(not(eq(TEST_DONATION_ID)))).willReturn(Optional.empty());
