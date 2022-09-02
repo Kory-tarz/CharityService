@@ -53,9 +53,7 @@ public class DonationController {
             setUpDonationFormModelAttributes(model);
             return "donation/form";
         }
-        System.out.println(donation.getInstitution().getName());
         Donation saveDonation = donationService.save(donation);
-
         return "redirect:/confirmation/" + saveDonation.getId();
     }
 

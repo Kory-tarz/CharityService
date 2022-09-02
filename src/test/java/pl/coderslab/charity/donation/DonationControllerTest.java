@@ -2,13 +2,18 @@ package pl.coderslab.charity.donation;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.format.support.DefaultFormattingConversionService;
+import org.springframework.format.support.FormattingConversionService;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -23,7 +28,8 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
-
+import static org.mockito.Mockito.doReturn;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.AdditionalMatchers.not;
 import static org.mockito.ArgumentMatchers.*;
@@ -34,6 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@WithMockUser
 class DonationControllerTest {
 
     @Autowired
@@ -41,6 +48,9 @@ class DonationControllerTest {
 
     @MockBean
     private DonationService donationService;
+
+    @SpyBean
+    FormattingConversionService formattingConversionService;
 
     private final static long TEST_DONATION_ID = 1L;
 
@@ -80,6 +90,16 @@ class DonationControllerTest {
 
         Donation donationWithId = getDonation();
         donationWithId.setId(TEST_DONATION_ID);
+
+        doReturn(true)
+                .when(formattingConversionService).canConvert(
+                argThat(argument -> argument.getObjectType().equals(String.class)),
+                argThat((ArgumentMatcher<TypeDescriptor>) argument -> argument.getObjectType().equals(Institution.class)));
+
+        doReturn(getInstitution())
+                .when(formattingConversionService)
+                .convert(eq("1"), any(TypeDescriptor.class), any(TypeDescriptor.class));
+
 
         given(donationService.save(any())).willReturn(donationWithId);
         given(donationService.findById(eq(TEST_DONATION_ID))).willReturn(Optional.of(donationWithId));
@@ -130,7 +150,8 @@ class DonationControllerTest {
                 .param("category", "1")
                 .param("_categories", "on")
                 .param("institution", "1")
-                .param("pickUpComment", donation.getPickUpComment()));
+                .param("pickUpComment", donation.getPickUpComment())
+                .with(csrf()));
     }
 
     @Test
