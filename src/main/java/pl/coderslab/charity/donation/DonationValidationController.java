@@ -27,50 +27,22 @@ public class DonationValidationController {
     }
 
     @PostMapping("/quantity")
-    public DonationValidationResult valid(@RequestBody DonationDTO donationDto){
-        return validationService.validateQuantity(donationDto);
-    }
-
-    @GetMapping("/quantity/{quantity}")
-    public DonationValidationResult validateQuantity(@PathVariable int quantity) {
-        DonationDTO donation = new DonationDTO();
-        donation.setQuantity(quantity);
+    public DonationValidationResult valid(@RequestBody DonationDTO donation){
         return validationService.validateQuantity(donation);
     }
 
-    @GetMapping("/institution/{id}")
-    public DonationValidationResult validateInstitution(@PathVariable long id) {
-        DonationDTO donation = new DonationDTO();
-        donation.setInstitution(id);
+    @PostMapping("/institution")
+    public DonationValidationResult validateInstitution(@RequestBody DonationDTO donation) {
         return validationService.validateInstitution(donation);
     }
 
-    @GetMapping("/category/{categories}")
-    public DonationValidationResult validatorCategories(@PathVariable Optional<long[]> categories) {
-        DonationDTO donation = new DonationDTO();
-        donation.setCategories(categories.orElse(new long[0]));
+    @PostMapping("/category")
+    public DonationValidationResult validateCategories(@RequestBody DonationDTO donation) {
         return validationService.validateCategories(donation);
     }
 
-    @GetMapping("/category/")
-    public DonationValidationResult validatorCategories() {
-        DonationDTO donation = new DonationDTO();
-        return validationService.validateCategories(donation);
-    }
-
-    @GetMapping("/address/{city}/{street}/{zipCode}/{date}/{time}")
-    public DonationValidationResult validateAddress(
-            @PathVariable String city,
-            @PathVariable String street,
-            @PathVariable String zipCode,
-            @PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
-            @PathVariable @DateTimeFormat(pattern = "HH:mm") LocalTime time) {
-        DonationDTO donation = new DonationDTO();
-        donation.setCity(city);
-        donation.setStreet(street);
-        donation.setZipCode(zipCode);
-        donation.setLocalDate(date);
-        donation.setLocalTime(time);
+    @PostMapping("/address")
+    public DonationValidationResult validateAddress(@RequestBody DonationDTO donation) {
         return validationService.validateAddress(donation);
     }
 

@@ -5,7 +5,6 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
 
 @Getter
 @Setter
@@ -16,7 +15,6 @@ public class DonationDTO {
     private String street;
     private String city;
     private String zipCode;
-    private LocalDate localDate;
-    private LocalTime localTime;
-    private String pickUpComment;
+    private LocalDate pickUpDate;
+    private LocalTime pickUpTime;
 }

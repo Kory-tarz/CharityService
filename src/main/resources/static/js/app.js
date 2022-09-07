@@ -158,32 +158,43 @@ document.addEventListener("DOMContentLoaded", function () {
 
         validateStep() {
             if (this.currentStep === 1) {
-                return this.$stepValidation(`category/${this.$getCheckedCategories()}`);
+                let testedValue = 'category'
+                let body = {
+                    categories : this.$getCheckedCategories(),
+                }
+                this.testValidation(body, testedValue);
             } else if (this.currentStep === 2) {
-                // return this.$stepValidation(`quantity/${this.$bags.value}`);
-                return this.testValidation();
+                let testedValue = 'quantity';
+                let body = {
+                    quantity: this.$bags.value,
+                }
+                this.testValidation(body, testedValue);
             } else if (this.currentStep === 3) {
-                return this.$stepValidation(`institution/${this.$getCheckedInstitutions()}`);
+                let testedValue = 'institution';
+                let body = {
+                    institution : this.$getCheckedInstitutions(),
+                }
+                this.testValidation(body, testedValue);
             } else if (this.currentStep === 4) {
-                return this.$stepValidation(`address/${this.$getAddressParameters()}`);
+                let testedValue = 'address';
+                let body = {
+                    city : this.$city.value,
+                    street : this.$street.value,
+                    zipCode : this.$zipCode.value,
+                    pickUpDate : this.$pickUpDate.value,
+                    pickUpTime : this.$pickUpTime.value,
+                }
+                this.testValidation(body, testedValue);
             } else {
                 this.currentStep++;
                 this.updateForm();
             }
         }
 
-        $getAddressParameters() {
-            return `${this.$city.value}/${this.$street.value}/${this.$zipCode.value}/${this.$pickUpDate.value}/${this.$pickUpTime.value}`
-        }
-
-        testValidation(){
+        testValidation(body, testedValue){
             const csrfToken = document.cookie.replace(/(?:(?:^|.*;\s*)XSRF-TOKEN\s*\=\s*([^;]*).*$)|^.*$/, '$1');
 
-            let body = {
-                quantity: this.$bags.value
-            }
-
-            return fetch(`${this.$host}/donation/quantity`, {
+            fetch(`${this.$host}/donation/${testedValue}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -194,44 +205,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 .then(response => response.json())
                 .then(result => {
                     if (!result.success) {
-                        if (result.msg) {
-                            this.$currentErrorField.innerText = result.msg;
-                        } else {
-                            this.$currentErrorField.innerText = 'Wprowadź dane';
-                        }
+                        this.$currentErrorField.innerText = result.msg;
                     } else {
                         this.$currentErrorField.innerText = '';
                         this.currentStep++;
                         this.updateForm();
                     }
                 })
-                .catch(() => false);
-        }
-
-        $stepValidation(link) {
-            // const csrfToken = document.cookie.replace(/(?:(?:^|.*;\s*)XSRF-TOKEN\s*\=\s*([^;]*).*$)|^.*$/, '$1');
-            return fetch(`${this.$host}/donation/${link}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    // 'X-XSRF-TOKEN': csrfToken,
-                },
-            })
-                .then(response => response.json())
-                .then(result => {
-                    if (!result.success) {
-                        if (result.msg) {
-                            this.$currentErrorField.innerText = result.msg;
-                        } else {
-                            this.$currentErrorField.innerText = 'Wprowadź dane';
-                        }
-                    } else {
-                        this.$currentErrorField.innerText = '';
-                        this.currentStep++;
-                        this.updateForm();
-                    }
-                })
-                .catch(() => false);
+                .catch();
         }
 
         /**
@@ -277,9 +258,9 @@ document.addEventListener("DOMContentLoaded", function () {
         $getCheckedCategories() {
             const checkedCategories = this.$form.querySelectorAll('input[name="categories"]:checked')
             if (checkedCategories.length === 0) {
-                return '';
+                return [];
             }
-            return [...checkedCategories].map(category => category.value).join(",");
+            return [...checkedCategories].map(category => category.value);
         }
 
         $getCheckedInstitutionName() {

@@ -34,15 +34,20 @@ public interface DonationValidator extends Function<DonationDTO, DonationValidat
     }
 
     static DonationValidator isDateValid() {
-        return donation ->
-                donation.getLocalDate().minusDays(3).compareTo(LocalDate.now()) > 0
-                        ? SUCCESS : INVALID_DATE;
+        return donation -> {
+            if(donation.getPickUpDate() == null) return NO_DATA;
+            return donation.getPickUpDate().minusDays(3).compareTo(LocalDate.now()) > 0
+                    ? SUCCESS : INVALID_DATE;
+        };
     }
 
     static DonationValidator isTimeValid() {
-        return donation -> donation.getLocalTime().isAfter(LocalTime.of(5, 59))
-                && donation.getLocalTime().isBefore(LocalTime.of(19, 1))
-                ? SUCCESS : INVALID_TIME;
+        return donation -> {
+            if(donation.getPickUpTime() == null) return NO_DATA;
+            return donation.getPickUpTime().isAfter(LocalTime.of(5, 59))
+                    && donation.getPickUpTime().isBefore(LocalTime.of(19, 1))
+                    ? SUCCESS : INVALID_TIME;
+        };
     }
 
     default DonationValidator and(DonationValidator other) {

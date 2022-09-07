@@ -13,7 +13,7 @@ public class Task {
         this.donationService = donationService;
     }
 
-    @Scheduled(cron = "*/10 * * * * *")
+    @Scheduled(cron = "* * 8 * * *")
     public void doATask(){
         donationService.deactivateCollectedDonations();
     }
