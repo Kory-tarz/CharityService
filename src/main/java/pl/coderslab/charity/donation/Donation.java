@@ -5,6 +5,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.springframework.format.annotation.DateTimeFormat;
 import pl.coderslab.charity.category.Category;
+import pl.coderslab.charity.donation.status.Status;
 import pl.coderslab.charity.institution.Institution;
 import pl.coderslab.charity.model.BaseEntity;
 
@@ -61,4 +62,7 @@ public class Donation extends BaseEntity {
     @Column(name = "pick_up_comment")
     private String pickUpComment;
 
+    @ManyToOne
+    @JoinColumn(name = "status_id")
+    private Status status;
 }
