@@ -13,7 +13,6 @@ import pl.coderslab.charity.model.ResourceNotFoundException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.Arrays;
 
 @Log4j2
 @Controller
@@ -53,8 +52,8 @@ public class DonationController {
             setUpDonationFormModelAttributes(model);
             return "donation/form";
         }
-        Donation saveDonation = donationService.save(donation);
-        return "redirect:/confirmation/" + saveDonation.getId();
+        Donation savedDonation = donationService.save(donation);
+        return "redirect:/confirmation/" + savedDonation.getId();
     }
 
     @GetMapping("/confirmation/{id}")

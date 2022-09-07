@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import pl.coderslab.charity.user.SpringDataUserDetailsService;
 
 @Configuration
@@ -25,7 +26,8 @@ public class WebSecurityConfig {
                         .loginPage("/login")
                         .permitAll()
                         .defaultSuccessUrl("/donate"))
-                .logout(logout -> logout.permitAll());
+                .logout(logout -> logout.permitAll())
+                .csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()); // send csrf with cookie
         return httpSecurity.build();
     }
 

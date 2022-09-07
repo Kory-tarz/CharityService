@@ -98,11 +98,14 @@ document.addEventListener("DOMContentLoaded", function () {
     class FormSteps {
 
         constructor(form) {
+
+            this.$host = 'http://localhost:8080';
             this.$form = form;
             this.$next = form.querySelectorAll(".next-step");
             this.$prev = form.querySelectorAll(".prev-step");
             this.$step = form.querySelector(".form--steps-counter span");
             this.currentStep = 1;
+            this.$currentErrorField = form.querySelector(`#step${this.currentStep}error`);
 
             this.$stepInstructions = form.querySelectorAll(".form--steps-instructions p");
             const $stepForms = form.querySelectorAll("form > div");
@@ -136,8 +139,7 @@ document.addEventListener("DOMContentLoaded", function () {
             this.$next.forEach(btn => {
                 btn.addEventListener("click", e => {
                     e.preventDefault();
-                    this.currentStep++;
-                    this.updateForm();
+                    this.validateStep();
                 });
             });
 
@@ -154,6 +156,84 @@ document.addEventListener("DOMContentLoaded", function () {
             this.$form.querySelector("form").addEventListener("submit", e => this.submit(e));
         }
 
+        validateStep() {
+            if (this.currentStep === 1) {
+                return this.$stepValidation(`category/${this.$getCheckedCategories()}`);
+            } else if (this.currentStep === 2) {
+                // return this.$stepValidation(`quantity/${this.$bags.value}`);
+                return this.testValidation();
+            } else if (this.currentStep === 3) {
+                return this.$stepValidation(`institution/${this.$getCheckedInstitutions()}`);
+            } else if (this.currentStep === 4) {
+                return this.$stepValidation(`address/${this.$getAddressParameters()}`);
+            } else {
+                this.currentStep++;
+                this.updateForm();
+            }
+        }
+
+        $getAddressParameters() {
+            return `${this.$city.value}/${this.$street.value}/${this.$zipCode.value}/${this.$pickUpDate.value}/${this.$pickUpTime.value}`
+        }
+
+        testValidation(){
+            const csrfToken = document.cookie.replace(/(?:(?:^|.*;\s*)XSRF-TOKEN\s*\=\s*([^;]*).*$)|^.*$/, '$1');
+
+            let body = {
+                quantity: this.$bags.value
+            }
+
+            return fetch(`${this.$host}/donation/quantity`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-XSRF-TOKEN': csrfToken,
+                },
+                body : JSON.stringify(body),
+            })
+                .then(response => response.json())
+                .then(result => {
+                    if (!result.success) {
+                        if (result.msg) {
+                            this.$currentErrorField.innerText = result.msg;
+                        } else {
+                            this.$currentErrorField.innerText = 'Wprowadź dane';
+                        }
+                    } else {
+                        this.$currentErrorField.innerText = '';
+                        this.currentStep++;
+                        this.updateForm();
+                    }
+                })
+                .catch(() => false);
+        }
+
+        $stepValidation(link) {
+            // const csrfToken = document.cookie.replace(/(?:(?:^|.*;\s*)XSRF-TOKEN\s*\=\s*([^;]*).*$)|^.*$/, '$1');
+            return fetch(`${this.$host}/donation/${link}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    // 'X-XSRF-TOKEN': csrfToken,
+                },
+            })
+                .then(response => response.json())
+                .then(result => {
+                    if (!result.success) {
+                        if (result.msg) {
+                            this.$currentErrorField.innerText = result.msg;
+                        } else {
+                            this.$currentErrorField.innerText = 'Wprowadź dane';
+                        }
+                    } else {
+                        this.$currentErrorField.innerText = '';
+                        this.currentStep++;
+                        this.updateForm();
+                    }
+                })
+                .catch(() => false);
+        }
+
         /**
          * Update form front-end
          * Show next or previous section etc.
@@ -161,7 +241,7 @@ document.addEventListener("DOMContentLoaded", function () {
         updateForm() {
             this.$step.innerText = this.currentStep;
 
-            // TODO: Validation
+            this.$currentErrorField = form.querySelector(`#step${this.currentStep}error`);
 
             this.slides.forEach(slide => {
                 slide.classList.remove("active");
@@ -174,7 +254,7 @@ document.addEventListener("DOMContentLoaded", function () {
             this.$stepInstructions[0].parentElement.parentElement.hidden = this.currentStep >= 5;
             this.$step.parentElement.hidden = this.currentStep >= 5;
 
-            this.$summary.querySelector('#quantity').innerText = this.$bags.value;
+            this.$summary.querySelector('#quantity').innerText = `${this.$bags.value} x worek z: ${this.$getCheckedCategoriesNames()}`;
             this.$summary.querySelector('#institution').innerText = this.$getCheckedInstitutionName();
             this.$summary.querySelector('#street').innerText = this.$street.value;
             this.$summary.querySelector('#city').innerText = this.$city.value;
@@ -185,12 +265,40 @@ document.addEventListener("DOMContentLoaded", function () {
             this.$summary.querySelector("#pick-up-comment").innerText = this.$pickUpComment.value;
         }
 
-        $getCheckedInstitutionName(){
+        $getCheckedInstitutions() {
             const checkedInstitution = this.$form.querySelector('input[name="institution"]:checked');
-            if (!checkedInstitution){
+            if (checkedInstitution) {
+                return checkedInstitution.value;
+            } else {
+                return 0;
+            }
+        }
+
+        $getCheckedCategories() {
+            const checkedCategories = this.$form.querySelectorAll('input[name="categories"]:checked')
+            if (checkedCategories.length === 0) {
+                return '';
+            }
+            return [...checkedCategories].map(category => category.value).join(",");
+        }
+
+        $getCheckedInstitutionName() {
+            const checkedInstitution = this.$form.querySelector('input[name="institution"]:checked');
+            if (!checkedInstitution) {
                 return 'nie wybrano instytucji';
             }
             return 'dla ' + checkedInstitution.parentElement.querySelector('.title').innerText;
+        }
+
+        $getCheckedCategoriesNames() {
+            const checkedCategories = this.$form.querySelectorAll('input[name="categories"]:checked')
+            if (checkedCategories.length === 0) {
+                return 'nie wybrano kategorii';
+            }
+            return [...checkedCategories]
+                .map(category =>
+                    category.parentElement.querySelector('.description').innerText)
+                .join(', ');
         }
 
 

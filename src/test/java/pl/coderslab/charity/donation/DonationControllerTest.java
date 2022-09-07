@@ -50,7 +50,7 @@ class DonationControllerTest {
     private DonationService donationService;
 
     @SpyBean
-    FormattingConversionService formattingConversionService;
+    private FormattingConversionService formattingConversionService;
 
     private final static long TEST_DONATION_ID = 1L;
 
@@ -65,7 +65,7 @@ class DonationControllerTest {
         Institution institution = new Institution();
         institution.setName("fundacja");
         institution.setDescription("pomocy");
-        institution.setId(1L);
+        institution.setId(2L);
         return institution;
     }
 
@@ -98,8 +98,7 @@ class DonationControllerTest {
 
         doReturn(getInstitution())
                 .when(formattingConversionService)
-                .convert(eq("1"), any(TypeDescriptor.class), any(TypeDescriptor.class));
-
+                .convert(eq("2"), any(TypeDescriptor.class), any(TypeDescriptor.class));
 
         given(donationService.save(any())).willReturn(donationWithId);
         given(donationService.findById(eq(TEST_DONATION_ID))).willReturn(Optional.of(donationWithId));
@@ -149,7 +148,7 @@ class DonationControllerTest {
                 .param("pickUpTime", donation.getPickUpTime().toString())
                 .param("category", "1")
                 .param("_categories", "on")
-                .param("institution", "1")
+                .param("institution", "2")
                 .param("pickUpComment", donation.getPickUpComment())
                 .with(csrf()));
     }
