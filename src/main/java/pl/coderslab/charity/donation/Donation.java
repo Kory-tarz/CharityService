@@ -3,6 +3,8 @@ package pl.coderslab.charity.donation;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.envers.AuditJoinTable;
+import org.hibernate.envers.Audited;
 import org.springframework.format.annotation.DateTimeFormat;
 import pl.coderslab.charity.category.Category;
 import pl.coderslab.charity.donation.status.Status;
@@ -16,6 +18,7 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Getter
@@ -65,4 +68,8 @@ public class Donation extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "status_id")
     private Status status;
+
+    public String getCategoryNames(){
+        return categories.stream().map(Category::getName).collect(Collectors.joining(", "));
+    }
 }

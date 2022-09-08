@@ -162,19 +162,19 @@ document.addEventListener("DOMContentLoaded", function () {
                 let body = {
                     categories : this.$getCheckedCategories(),
                 }
-                this.testValidation(body, testedValue);
+                this.sendValidationRequest(body, testedValue);
             } else if (this.currentStep === 2) {
                 let testedValue = 'quantity';
                 let body = {
                     quantity: this.$bags.value,
                 }
-                this.testValidation(body, testedValue);
+                this.sendValidationRequest(body, testedValue);
             } else if (this.currentStep === 3) {
                 let testedValue = 'institution';
                 let body = {
                     institution : this.$getCheckedInstitutions(),
                 }
-                this.testValidation(body, testedValue);
+                this.sendValidationRequest(body, testedValue);
             } else if (this.currentStep === 4) {
                 let testedValue = 'address';
                 let body = {
@@ -184,14 +184,14 @@ document.addEventListener("DOMContentLoaded", function () {
                     pickUpDate : this.$pickUpDate.value,
                     pickUpTime : this.$pickUpTime.value,
                 }
-                this.testValidation(body, testedValue);
+                this.sendValidationRequest(body, testedValue);
             } else {
                 this.currentStep++;
                 this.updateForm();
             }
         }
 
-        testValidation(body, testedValue){
+        sendValidationRequest(body, testedValue){
             const csrfToken = document.cookie.replace(/(?:(?:^|.*;\s*)XSRF-TOKEN\s*\=\s*([^;]*).*$)|^.*$/, '$1');
 
             fetch(`${this.$host}/donation/${testedValue}`, {

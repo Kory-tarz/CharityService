@@ -10,6 +10,43 @@
   <body>
     <div th:replace="fragments/logged-user-header :: user-header"></div>
 
+    <div id="summary" class="summary">
+      <div class="form-section">
+        <h4>Oddałeś:</h4>
+        <ul>
+          <li>
+            <span class="icon icon-bag"></span>
+            <span id="quantity" class="summary--text" th:text="${donation.quantity} + ' worki z: ' + ${donation.getCategoryNames()}"></span>
+          </li>
+
+          <li>
+            <span class="icon icon-hand"></span>
+            <span id="institution" class="summary--text" th:text="'Dla ' + ${donation.institution.name}"></span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="form-section form-section--columns">
+        <div class="form-section--column">
+          <h4>Adres odbioru:</h4>
+          <ul>
+            <li id="street" th:text="${donation.street}"></li>
+            <li id="city" th:text="${donation.city}"></li>
+            <li id="zip-code" th:text="${donation.zipCode}"></li>
+          </ul>
+        </div>
+
+        <div class="form-section--column">
+          <h4>Termin odbioru:</h4>
+          <ul>
+            <li id="pick-up-date" th:text="${donation.pickUpDate}"></li>
+            <li id="pick-up-time" th:text="${donation.pickUpTime}"></li>
+            <li id="pick-up-comment" th:text="${donation.pickUpComment}"></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
     <div class="slogan container container--90">
       <h2>
         Dziękujemy za przesłanie formularza Na maila prześlemy wszelkie

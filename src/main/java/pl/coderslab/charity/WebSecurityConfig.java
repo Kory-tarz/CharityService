@@ -21,6 +21,7 @@ public class WebSecurityConfig {
         httpSecurity.authorizeRequests(requests -> requests
                         .antMatchers("/").permitAll()
                         .antMatchers("/login", "/register").anonymous()
+                        .antMatchers("/admin/**").hasAnyRole("ADMIN")
                         .anyRequest().authenticated())
                 .formLogin(form -> form
                         .loginPage("/login")

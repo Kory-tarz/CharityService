@@ -16,4 +16,8 @@ public class InstitutionService {
     public List<Institution> findAll() {
         return institutionRepository.findAll();
     }
+
+    public Institution save(Institution institution) {
+        return institutionRepository.save(institution);
+    }
 }

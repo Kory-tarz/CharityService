@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+    <title>Admin Panel</title>
+    <link rel="stylesheet" th:href="@{/styles/css/style.css}"/>
+</head>
+<body>
+<div th:replace="fragments/logged-user-header :: user-header"></div>
+
+<div class="container--90">
+    <div class="block-list">
+        <ul>
+            <li th:each="category : ${categories}">
+                <form th:action="@{/admin/category/edit}" th:object="${category}" method="post">
+                    <input type="hidden" th:value="*{id}" name="id"/>
+                    <label> Nazwa kategorii: <input type="text" th:value="*{name}" name="name"/></label>
+                    <div class="form-group form-group--buttons">
+                        <button type="submit" class="btn--small">Edytuj</button>
+                    </div>
+                </form>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>
